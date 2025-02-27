@@ -1,0 +1,185 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: center;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+h1 {
+    font-size: 30px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    width: 100%;
+    text-align: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 80%;
+    max-width: 800px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.form-container select, .form-container input {
+    padding: 12px;
+    margin: 10px;
+    width: 80%;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.result-container {
+    margin-top: 20px;
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-btn {
+    font-size: 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 10px;
+    display: none;
+}
+
+.copy-btn:hover {
+    background-color: #0056b3;
+}
+
+.rates-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.rate-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    flex: 1 1 0; /* Permite que los rate-box se expandan de manera equitativa */
+    min-height: 200px; /* Altura mínima asegurada */
+}
+
+.rate-box img {
+    max-width: 80px;
+    border-radius: 5px;
+    margin-right: 0;
+}
+
+.rate-box .price {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+}
+
+.rate-box p {
+    margin: 5px 0;
+}
+
+.rate-box .positive {
+    color: green;
+}
+
+.rate-box .negative {
+    color: red;
+}
+
+.rate-box .change {
+    margin-top: 5px;
+    font-size: 18px;
+}
+
+.rate-box .last-update {
+    font-size: 14px;
+    color: #888;
+}
+
+.button-container {
+    margin-top: 30px;
+}
+
+.calculate-btn {
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.calculate-btn:hover {
+    background-color: #218838;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+
+    .rates-container {
+        width: 100%;
+        flex-direction: row; /* Los rate-box se alinean en fila */
+        justify-content: space-around; /* Distribuye los rate-box con espacio alrededor */
+        gap: 15px; /* Añade espacio entre las columnas */
+    }
+
+    .rate-box {
+        width: 45%; /* Cada rate-box ocupará el 45% del contenedor */
+        min-height: 150px; /* Altura mínima para los rate-box */
+        flex: 1 1 45%; /* Asegura que los rate-box tengan el mismo tamaño */
+    }
+
+    .form-container select, .form-container input {
+        width: 100%; /* Ajuste para pantallas más pequeñas */
+    }
+}
+
+/* Agregar el espaciado adecuado en el contenedor principal */
+body {
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
