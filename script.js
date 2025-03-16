@@ -1,4 +1,5 @@
 const MONITORS = ['bcv', 'enparalelovzla', 'promedio'];
+
 const IMAGES = {
     bcv: 'bcv.webp',
     enparalelovzla: 'paralelo.png',
@@ -65,7 +66,8 @@ const updateMonitorDisplay = (id, monitor) => {
     if (elements.title) elements.title.textContent = monitor.title;
     if (elements.price) {
         const formattedPrice = formatVenezuelanCurrency(monitor.price);
-        elements.price.textContent = `Bs ${formattedPrice}`;
+        // Agregar el símbolo al lado izquierdo del precio
+        elements.price.innerHTML = `${monitor.symbol} ${formattedPrice} Bs`;
     }
     if (elements.lastUpdate) elements.lastUpdate.textContent = monitor.last_update;
     if (elements.oldPrice) {
@@ -74,8 +76,9 @@ const updateMonitorDisplay = (id, monitor) => {
     }
 
     if (elements.change && elements.percentage) {
-        elements.change.textContent = `${monitor.color === 'green' ? '+' : '-'}${monitor.change}`;
-        elements.percentage.textContent = `${monitor.color === 'green' ? '+' : '-'}${monitor.percent}%`;
+        const sign = monitor.color === 'green' ? '+' : '-';
+        elements.change.innerHTML = `<span class="math-inline">${sign}</span>${monitor.change}`;
+        elements.percentage.innerHTML = `<span class="math-inline">${sign}</span>${monitor.percent}%`;
 
         elements.change.classList.toggle('positive', monitor.color === 'green');
         elements.change.classList.toggle('negative', monitor.color === 'red');
@@ -94,45 +97,64 @@ const copyBtn = document.getElementById('copy-btn');
 const copyMessage = document.getElementById('copy-message');
 const amountError = document.getElementById('amount-error');
 const rateError = document.getElementById('rate-error');
-let customRateError = null; // Declarar la variable aquí
-
-function normalizeDecimalSeparator(value) {
-    const parts = value.replace(/[^0-9,.]/g, '').split(/[.,]/);
-    if (parts.length > 2) {
-        return parts[0] + ',' + parts.slice(1).join('');
-    }
-    if (value.includes('.')) {
-        return value.replace('.', ',');
-    }
-    return value;
-}
+let customRateError = document.getElementById('custom-rate-error');
 
 function handleInputValue(inputElement, errorElement) {
     let value = inputElement.value;
-    const decimalSeparator = value.includes(',') || value.includes('.');
-    const nonDigitOrSeparator = /[^0-9,.]/g;
+    const hasComma = value.includes(',');
+    const hasDot = value.includes('.');
+    const allowedChars = /^[0-9]*([.,]{0,1}[0-9]*)?$/;
 
-    inputElement.value = value.replace(nonDigitOrSeparator, '');
-
-    if (decimalSeparator) {
-        const parts = inputElement.value.split(/[,.]/);
-        if (parts.length > 1) {
-            parts[1] = parts[1].slice(0, 2);
-            inputElement.value = parts.join(',');
-        }
-        const countCommas = inputElement.value.split(',').length - 1;
-        const countDots = inputElement.value.split('.').length - 1;
-        if (countCommas > 1 || countDots > 1) {
-            inputElement.value = inputElement.value.slice(0, -1);
-        }
+    // Validar caracteres permitidos
+    if (!allowedChars.test(value)) {
+        inputElement.classList.add('invalid');
+        inputElement.value = value.slice(0, -1);
+        errorElement.textContent = 'Caracter no permitido';
+        return;
     }
 
-    if (inputElement.value.length > 15) {
-        inputElement.value = inputElement.value.slice(0, 15);
+    // Validar si hay más de un separador decimal
+    if (hasComma && hasDot) {
+        inputElement.classList.add('invalid');
+        inputElement.value = value.slice(0, -1);
+        errorElement.textContent = 'Solo puede usar un separador decimal';
+        return;
     }
-    errorElement.textContent = '';
+
+    // Normalizar el valor
+    inputElement.classList.remove('invalid');
+    if (hasDot && !hasComma) {
+        value = value.replace('.', ',');
+    }
+
+    const parts = value.split(',');
+    if (parts.length > 1 && parts[1].length > 2) {
+        inputElement.classList.add('invalid');
+        inputElement.value = parts[0] + ',' + parts[1].slice(0, 2);
+        errorElement.textContent = 'Máximo 2 decimales';
+        return;
+    }
+
+    // Limitar longitud
+    if (value.replace(/[^0-9,]/g, '').length > 15) {
+        const beforeDecimal = value.split(',')[0] || '';
+        inputElement.value = beforeDecimal.slice(0, 15) + (parts.length > 1 ? ',' + parts[1] : '');
+        errorElement.textContent = 'Demasiados dígitos';
+    } else {
+        errorElement.textContent = ''; // Limpiar mensaje si válido
+        inputElement.value = value;
+    }
+    
+    // Validar si no hay error y proceder con la conversión
+    if (inputElement.classList.contains('invalid')) {
+        return;
+    }
+
+    // Llamar a la conversión si el valor es válido
     convertCurrency();
 }
+
+
 
 amountInput.addEventListener('input', function() {
     handleInputValue(this, amountError);
@@ -142,24 +164,110 @@ customRateInput.addEventListener('input', function() {
     handleInputValue(this, customRateError);
 });
 
+amountInput.addEventListener('paste', function(event) {
+    event.preventDefault();
+    const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+    const cleanedText = pastedText.replace(/[^0-9.,]/g, '');
+    const lastSeparatorIndex = Math.max(cleanedText.lastIndexOf(','), cleanedText.lastIndexOf('.'));
+    let finalValue = '';
+    if (lastSeparatorIndex !== -1) {
+        const integerPart = cleanedText.substring(0, lastSeparatorIndex).replace(/[.,]/g, '');
+        const decimalPart = cleanedText.substring(lastSeparatorIndex + 1).replace(/[^0-9]/g, '');
+        const separator = cleanedText[lastSeparatorIndex] === '.' ? ',' : cleanedText[lastSeparatorIndex];
+        finalValue = integerPart + separator + decimalPart;
+    } else {
+        finalValue = cleanedText.replace(/[^0-9]/g, '');
+    }
+    const parts = finalValue.split(',');
+    if (parts.length > 1) {
+        parts[1] = parts[1].slice(0, 2);
+        finalValue = parts.join(',');
+    }
+    const numericPart = finalValue.replace(/[^0-9]/g, '');
+    if (numericPart.length > 15) {
+        const integerLength = parts[0]?.length || 0;
+        const maxIntegerLength = 15 - (parts.length > 1 ? parts[1].length : 0);
+        if (integerLength > maxIntegerLength) {
+            parts[0] = parts[0].slice(0, maxIntegerLength);
+            finalValue = parts.join(',');
+        }
+    }
+    this.value = finalValue;
+    // Validar el valor pegado para agregar o remover la clase 'invalid'
+    const isValidPaste = /^[0-9]*([.,]{0,1}[0-9]{0,2})?$/.test(this.value) && !(this.value.includes(',') && this.value.includes('.'));
+    if (!isValidPaste) {
+        this.classList.add('invalid');
+        setTimeout(() => this.classList.remove('invalid'), 500); // Remover la clase después de un breve tiempo
+    } else {
+        this.classList.remove('invalid');
+        this.dispatchEvent(new Event('input'));
+    }
+});
+
+customRateInput.addEventListener('paste', function(event) {
+    event.preventDefault();
+    const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+    const cleanedText = pastedText.replace(/[^0-9.,]/g, '');
+    const lastSeparatorIndex = Math.max(cleanedText.lastIndexOf(','), cleanedText.lastIndexOf('.'));
+    let finalValue = '';
+    if (lastSeparatorIndex !== -1) {
+        const integerPart = cleanedText.substring(0, lastSeparatorIndex).replace(/[.,]/g, '');
+        const decimalPart = cleanedText.substring(lastSeparatorIndex + 1).replace(/[^0-9]/g, '');
+        const separator = cleanedText[lastSeparatorIndex] === '.' ? ',' : cleanedText[lastSeparatorIndex];
+        finalValue = integerPart + separator + decimalPart;
+    } else {
+        finalValue = cleanedText.replace(/[^0-9]/g, '');
+    }
+    const parts = finalValue.split(',');
+    if (parts.length > 1) {
+        parts[1] = parts[1].slice(0, 2);
+        finalValue = parts.join(',');
+    }
+    const numericPart = finalValue.replace(/[^0-9]/g, '');
+    if (numericPart.length > 15) {
+        const integerLength = parts[0]?.length || 0;
+        const maxIntegerLength = 15 - (parts.length > 1 ? parts[1].length : 0);
+        if (integerLength > maxIntegerLength) {
+            parts[0] = parts[0].slice(0, maxIntegerLength);
+            finalValue = parts.join(',');
+        }
+    }
+    this.value = finalValue;
+    // Validar el valor pegado para agregar o remover la clase 'invalid'
+    const isValidPaste = /^[0-9]*([.,]{0,1}[0-9]{0,2})?$/.test(this.value) && !(this.value.includes(',') && this.value.includes('.'));
+    if (!isValidPaste) {
+        this.classList.add('invalid');
+        setTimeout(() => this.classList.remove('invalid'), 500); // Remover la clase después de un breve tiempo
+    } else {
+        this.classList.remove('invalid');
+        this.dispatchEvent(new Event('input'));
+    }
+});
+
 function convertCurrency() {
     const amountInputValue = amountInput.value;
     const customRateInputValue = customRateInput.value;
-
-    const normalizedAmount = normalizeDecimalSeparator(amountInputValue).replace(',', '.');
-    const normalizedCustomRate = normalizeDecimalSeparator(customRateInputValue).replace(',', '.');
-
+    const normalizedAmount = amountInputValue.replace(',', '.');
+    const normalizedCustomRate = customRateInputValue.replace(',', '.');
     const amount = parseFloat(normalizedAmount);
     const currencyType = currencyTypeSelect.value;
     const selectedRateType = exchangeRateSelect.value;
     let rate = null;
 
+    const amountInputElem = document.getElementById('amount');
+    const customRateInputElem = document.getElementById('custom-rate');
+
+    amountInputElem.classList.remove('invalid');
+    customRateInputElem.classList.remove('invalid');
+
     if (isNaN(amount) && amountInputValue.trim() !== '') {
+        amountInputElem.classList.add('invalid');
         amountError.textContent = 'Ingrese una cantidad válida.';
         conversionResult.textContent = '0,00';
         copyBtn.style.display = 'none';
         return;
     } else if (amount <= 0 && amountInputValue.trim() !== '') {
+        amountInputElem.classList.add('invalid');
         amountError.textContent = 'La cantidad debe ser mayor que cero.';
         conversionResult.textContent = '0,00';
         copyBtn.style.display = 'none';
@@ -168,18 +276,19 @@ function convertCurrency() {
         amountError.textContent = '';
         conversionResult.textContent = '0,00';
         copyBtn.style.display = 'none';
-        return;
     }
 
     if (selectedRateType === 'custom') {
         rate = parseFloat(normalizedCustomRate);
         if (isNaN(rate) && customRateInputValue.trim() !== '') {
             if (customRateError) customRateError.textContent = 'Ingrese una tasa personalizada válida.';
+            customRateInputElem.classList.add('invalid');
             conversionResult.textContent = '0,00';
             copyBtn.style.display = 'none';
             return;
         } else if (rate <= 0 && customRateInputValue.trim() !== '') {
             if (customRateError) customRateError.textContent = 'La tasa debe ser mayor que cero.';
+            customRateInputElem.classList.add('invalid');
             conversionResult.textContent = '0,00';
             copyBtn.style.display = 'none';
             return;
@@ -187,15 +296,21 @@ function convertCurrency() {
             if (customRateError) customRateError.textContent = '';
             conversionResult.textContent = '0,00';
             copyBtn.style.display = 'none';
-            return;
         }
     } else {
-        if (selectedRateType === 'bcv') {
-            rate = bcvRate;
-        } else if (selectedRateType === 'enparalelovzla') {
-            rate = enparalelovzlaRate;
-        } else if (selectedRateType === 'promedio') {
-            rate = promedioRate;
+        // Asignar la tasa correspondiente según la selección del usuario
+        switch (selectedRateType) {
+            case 'bcv':
+                rate = bcvRate;
+                break;
+            case 'enparalelovzla':
+                rate = enparalelovzlaRate;
+                break;
+            case 'promedio':
+                rate = promedioRate;
+                break;
+            default:
+                rate = null;
         }
 
         if (rate === null || isNaN(rate) || rate <= 0) {
@@ -235,6 +350,7 @@ function convertCurrency() {
     }
 }
 
+
 exchangeRateSelect.addEventListener('change', function() {
     if (this.value === 'custom') {
         customRateInput.style.display = 'block';
@@ -242,6 +358,7 @@ exchangeRateSelect.addEventListener('change', function() {
         customRateInput.style.display = 'none';
         customRateInput.value = '';
         if (customRateError) customRateError.textContent = '';
+        customRateInput.classList.remove('invalid');
     }
     convertCurrency();
 });
@@ -252,7 +369,7 @@ copyBtn.addEventListener('click', function() {
     let textToCopy = conversionResult.textContent.split(' ')[0];
     navigator.clipboard.writeText(textToCopy)
         .then(() => {
-            console.log('Copiado exitoso'); // Para depuración
+            console.log('Copiado exitoso');
             copyMessage.textContent = '¡Copiado!';
             copyMessage.classList.remove('error');
             copyMessage.classList.add('show');
@@ -262,13 +379,13 @@ copyBtn.addEventListener('click', function() {
         })
         .catch(err => {
             console.error('Error al copiar al portapapeles:', err);
-            console.log('Error al copiar'); // Para depuración
+            console.log('Error al copiar');
             copyMessage.textContent = 'Error al copiar';
             copyMessage.classList.add('show', 'error');
             setTimeout(() => {
                 copyMessage.classList.remove('show', 'error');
             }, 2000);
-        });
+ });
 });
 
 function initializeCalculator() {
@@ -278,8 +395,8 @@ function initializeCalculator() {
     conversionResult.classList.add('conversion-result-styled');
     copyBtn.style.display = 'none';
     amountError.textContent = '';
-
-    customRateError = document.getElementById('custom-rate-error'); // Asignar el elemento aquí
+    amountInput.classList.remove('invalid');
+    customRateInput.classList.remove('invalid');
 
     if (customRateError) {
         customRateError.textContent = '';
@@ -318,5 +435,3 @@ window.addEventListener('load', () => {
         customRateInputElement.style.display = 'block';
     }
 });
-
-fetchData();
