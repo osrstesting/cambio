@@ -85,12 +85,19 @@ function handlePaste(event, inputElement) {
     const withoutDots = pastedText.replace(/\./g, '');
     let processedValue = '';
     let commaFound = false;
-    for (const char of withoutDots) {
+    let commaIndex = -1;
+
+    // Encontrar la primera coma y su índice en el texto original (sin eliminar puntos)
+    const firstCommaOriginalIndex = pastedText.indexOf(',');
+
+    for (let i = 0; i < withoutDots.length && processedValue.replace(/[^0-9]/g, '').length < 14; i++) {
+        const char = withoutDots[i];
         if (/[0-9]/.test(char)) {
             processedValue += char;
         } else if (char === ',' && !commaFound) {
             processedValue += char;
             commaFound = true;
+            commaIndex = processedValue.length - 1; // Guardar el índice de la coma en el valor procesado
         }
     }
 
@@ -193,7 +200,7 @@ const updateMonitorDisplay = (id, monitor) => {
 
     if (elements.oldPrice) {
         const formattedOldPrice = formatVenezuelanCurrency(monitor.price_old);
-        elements.oldPrice.textContent = `Anterior: Bs ${formattedOldPrice}`;
+        elements.oldPrice.textContent = `Anterior: ${formattedOldPrice} Bs`;
     }
 
     if (elements.change && elements.percentage) {
@@ -209,7 +216,7 @@ const updateMonitorDisplay = (id, monitor) => {
         const formattedChange = Math.abs(change).toFixed(2).replace('.', ',');
         const formattedPercentage = Math.abs(percentage).toFixed(2).replace('.', ',');
 
-        elements.change.innerHTML = `${sign}${formattedChange}`;
+        elements.change.innerHTML = `${sign}${formattedChange} Bs`;
         elements.percentage.innerHTML = `${sign}${formattedPercentage}%`;
 
         elements.change.classList.remove('positive', 'negative');
