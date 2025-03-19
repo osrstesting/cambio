@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Conversor de divisas entre bolívares y dólares con tasas actualizadas del mercado venezolano">
+    <title>Conversor de Divisas Venezuela</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="main-container">
+        <header class="main-header">
+            <h1><i class="fas fa-coins" aria-hidden="true"></i> Mercado Cambiario</h1>
+            <p class="update-info" aria-live="polite">Actualizado en tiempo real</p>
+        </header>
+
+        <main class="dashboard-container">
+            <!-- Calculadora -->
+            <section class="calculator-card">
+                <header class="card-header">
+                    <h2><i class="fas fa-calculator" aria-hidden="true"></i> Calculadora</h2>
+                </header>
+                <div class="card-body">
+                    <!-- Contenedor de las dos columnas -->
+                    <div class="input-columns">
+                        <!-- Columna izquierda -->
+                        <div class="left-column">
+                            <!-- Cantidad -->
+                            <div class="input-group">
+                                <label for="amount"><i class="fas fa-money-bill-wave" aria-hidden="true"></i> Cantidad</label>
+                                <input type="tel" id="amount" placeholder="0,00" inputmode="decimal" aria-describedby="error-container">
+                            </div>
+
+                            <!-- Conversión -->
+                            <div class="input-group">
+                                <label for="currency-type"><i class="fas fa-exchange-alt" aria-hidden="true"></i> Conversión</label>
+                                <select id="currency-type" aria-describedby="conversion-direction">
+                                    <option value="bolivares-to-dollars">Bs → USD</option>
+                                    <option value="dollars-to-bolivares">USD → Bs</option>
+                                </select>
+                                <span id="conversion-direction" class="visually-hidden">Dirección de la conversión</span>
+                            </div>
+                        </div>
+
+                        <!-- Columna derecha -->
+                        <div class="right-column">
+                            <!-- Tasa -->
+                            <div class="input-group">
+                                <label for="exchange-rate"><i class="fas fa-chart-line" aria-hidden="true"></i> Tasa</label>
+                                <select id="exchange-rate" aria-describedby="rate-source">
+                                    <option value="bcv">Oficial (BCV)</option>
+                                    <option value="enparalelovzla">EnParaleloVzla</option>
+                                    <option value="promedio">Promedio</option>
+                                    <option value="custom">Personalizada</option>
+                                </select>
+                                <span id="rate-source" class="visually-hidden">Fuente de la tasa de cambio</span>
+                            </div>
+
+                            <!-- Tasa Personalizada -->
+                            <div class="input-group">
+                                <label for="custom-rate"><i class="fas fa-pencil-alt" aria-hidden="true"></i> Seleccione</label>
+                                <input type="tel" id="custom-rate" placeholder="Ej: 36,85" inputmode="decimal" disabled aria-describedby="error-container">
+                            </div>
+                        </div>
+                    </div>
+					
+					<span class="error-container-wrapper">
+                    <!-- Contenedor de errores -->
+                    <div class="error-container" id="error-container" role="alert" aria-live="assertive"></div>
+					                   </span>
+					 <span class="copy-message" id="copy-message" role="status" aria-live="polite">¡Copiado!</span>
+                    <!-- Resultado -->
+                    <div class="result-container" aria-live="polite">
+                        <div class="conversion-result" id="conversion-result">0,00</div>
+                    </div>
+                    <button id="copy-btn" class="icon-btn" title="Copiar resultado al portapapeles">
+                        <i class="far fa-copy" aria-hidden="true"></i> Copiar
+                    </button>
+
+                </div>
+            </section>
+
+            <!-- Tasas de Cambio -->
+            <section class="rates-grid">
+                <!-- BCV -->
+                <article class="rate-card">
+                    <header class="card-header">
+                        <img id="bcv-image" src="" alt="Logo BCV" class="rate-logo">
+                        <h3 id="bcv-title"></h3>
+                    </header>
+                    <div class="card-body">
+                        <div class="rate-value">
+                            <span id="bcv-price" class="price"></span>
+                            <div class="rate-change">
+                                <span id="bcv-change" class="change-indicator"></span>
+                                <span id="bcv-percentage" class="percentage"></span>
+                            </div>
+                        </div>
+                        <footer class="rate-footer">
+                            <p class="update-time"><i class="far fa-clock" aria-hidden="true"></i> <span id="bcv-last-update"></span></p>
+                            <p class="previous-rate" id="bcv-old-price"></p>
+                        </footer>
+                    </div>
+                </article>
+
+                <!-- EnParaleloVzla -->
+                <article class="rate-card">
+                    <header class="card-header">
+                        <img id="enparalelovzla-image" src="" alt="Logo EnParalelo" class="rate-logo">
+                        <h3 id="enparalelovzla-title"></h3>
+                    </header>
+                    <div class="card-body">
+                        <div class="rate-value">
+                            <span id="enparalelovzla-price" class="price"></span>
+                            <div class="rate-change">
+                                <span id="enparalelovzla-change" class="change-indicator"></span>
+                                <span id="enparalelovzla-percentage" class="percentage"></span>
+                            </div>
+                        </div>
+                        <footer class="rate-footer">
+                            <p class="update-time"><i class="far fa-clock" aria-hidden="true"></i> <span id="enparalelovzla-last-update"></span></p>
+                            <p class="previous-rate" id="enparalelovzla-old-price"></p>
+                        </footer>
+                    </div>
+                </article>
+
+                <!-- Promedio -->
+                <article class="rate-card">
+                    <header class="card-header">
+                        <img id="promedio-image" src="" alt="Logo Promedio" class="rate-logo">
+                        <h3 id="promedio-title"></h3>
+                    </header>
+                    <div class="card-body">
+                        <div class="rate-value">
+                            <span id="promedio-price" class="price"></span>
+                            <div class="rate-change">
+                                <span id="promedio-change" class="change-indicator"></span>
+                                <span id="promedio-percentage" class="percentage"></span>
+                            </div>
+                        </div>
+                        <footer class="rate-footer">
+                            <p class="update-time"><i class="far fa-clock" aria-hidden="true"></i> <span id="promedio-last-update"></span></p>
+                            <p class="previous-rate" id="promedio-old-price"></p>
+                        </footer>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
