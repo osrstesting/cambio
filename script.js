@@ -408,6 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fetch exchange rate data
     fetchData();
 
-    // Set up periodic data refresh (every 5 minutes)
-    setInterval(fetchData, 300000);
+    // Set up periodic data refresh (every 10 minutes)
+    setInterval(fetchData, 600000);
 });
