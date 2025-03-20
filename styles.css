@@ -534,11 +534,17 @@ input.invalid {
 @media (max-width: 576px) {
     body {
         padding: 15px; /* Padding del body en móviles */
+        display: flex; /* Mantenemos flexbox para la calculadora y las tasas */
+        flex-direction: column; /* Aseguramos que los elementos se apilen verticalmente en el body */
+        align-items: stretch; /* Los elementos se estiran para ocupar el ancho */
+        /* align-items: center;  Elimina o comenta esta línea para alinear arriba */
+        justify-content: flex-start; /* Alinea los elementos al inicio (arriba) del contenedor flex */
+        min-height: auto; /* Ajusta la altura automáticamente */
     }
 
     /* Ajustes para la calculadora en móviles */
     .calculator-card {
-    /*    padding: 10px;  Padding interno para móviles */
+    /* padding: 10px;  Padding interno para móviles */
     }
 
     .input-columns {
@@ -570,105 +576,105 @@ input.invalid {
         font-size: 16px; /* Tamaño de fuente para el botón */
     }
 
-.rates-grid {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto; /* Por si acaso en pantallas muy pequeñas */
-    padding: 6px;
-    justify-content: space-around; /* Distribuir las tarjetas en el ancho disponible */
-  }
+    .rates-grid {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto; /* Por si acaso en pantallas muy pequeñas */
+        padding: 6px;
+        justify-content: space-around; /* Distribuir las tarjetas en el ancho disponible */
+    }
 
-  .rate-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrar el contenido internamente para ahorrar ancho */
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    margin-right: 0; /* Eliminar margen derecho entre tarjetas */
-    margin-bottom: 0;
-    flex-shrink: 1; /* Permitir que las tarjetas se encojan un poco si es necesario */
-    width: 30%; /* Intentar que cada tarjeta ocupe aproximadamente un tercio del ancho */
-    box-sizing: border-box; /* Asegurar que el padding y el borde se incluyan en el ancho */
-    overflow: hidden; /* Mantenemos esto */
-  }
+    .rate-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centrar el contenido internamente para ahorrar ancho */
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        margin-right: 0; /* Eliminar margen derecho entre tarjetas */
+        margin-bottom: 20px; /* Agregar un poco de margen inferior entre las tarjetas en móvil */
+        flex-shrink: 1; /* Permitir que las tarjetas se encojan un poco si es necesario */
+        width: 100%; /* Ocupar todo el ancho disponible en móvil */
+        box-sizing: border-box; /* Asegurar que el padding y el borde se incluyan en el ancho */
+        overflow: hidden; /* Mantenemos esto */
+    }
 
-  .rate-card .card-header {
-    display: flex;
-    flex-direction: column; /* Apilar logo y título verticalmente para ahorrar ancho */
-    align-items: center;
-    margin-bottom: 2px;
-    padding: 2px 0;
-    width: 100%;
-    border-radius: 3px 3px 0 0; /* Redondeo superior */
-    /* Asegúrate de que el header tenga un fondo para que el border-radius sea visible */
-    /* Si no tiene un fondo definido en otro lugar, puedes añadir uno: */
-    /* background-color: #f9f9f9; */
-  }
+    .rate-card .card-header {
+        display: flex;
+        flex-direction: column; /* Apilar logo y título verticalmente para ahorrar ancho */
+        align-items: center;
+        margin-bottom: 2px;
+        padding: 2px 0;
+        width: 100%;
+        border-radius: 3px 3px 0 0; /* Redondeo superior */
+        /* Asegúrate de que el header tenga un fondo para que el border-radius sea visible */
+        /* Si no tiene un fondo definido en otro lugar, puedes añadir uno: */
+        /* background-color: #f9f9f9; */
+    }
 
-  .rate-card .card-header .rate-logo {
-    width: 20px;
-    height: 20px;
-    margin-right: 0; /* Eliminar margen derecho */
-    margin-bottom: 2px; /* Espacio entre logo y título */
-  }
+    .rate-card .card-header .rate-logo {
+        width: 20px;
+        height: 20px;
+        margin-right: 0; /* Eliminar margen derecho */
+        margin-bottom: 2px; /* Espacio entre logo y título */
+    }
 
-  .rate-card .card-header h3 {
-    font-size: 10px; /* Título muy pequeño */
-    margin: 0;
-    line-height: 1.1;
-    text-align: center; /* Centrar el título */
-  }
+    .rate-card .card-header h3 {
+        font-size: 10px; /* Título muy pequeño */
+        margin: 0;
+        line-height: 1.1;
+        text-align: center; /* Centrar el título */
+    }
 
-  .rate-card .card-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centrar el contenido del body */
-    padding: 0;
-    width: 100%;
-  }
+    .rate-card .card-body {
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Centrar el contenido del body */
+        padding: 8px; /* Agregar un poco de padding al body en móvil */
+        width: 100%;
+    }
 
-  .rate-card .card-body .rate-value {
-    display: flex;
-    flex-direction: column; /* Apilar precio y cambio */
-    align-items: center;
-    margin-bottom: 2px;
-  }
+    .rate-card .card-body .rate-value {
+        display: flex;
+        flex-direction: column; /* Apilar precio y cambio */
+        align-items: center;
+        margin-bottom: 4px;
+    }
 
-  .rate-card .card-body .price {
-    font-size: 14px; /* Precio más pequeño */
-    font-weight: bold;
-    margin-right: 0;
-  }
+    .rate-card .card-body .price {
+        font-size: 18px; /* Precio más legible en móvil */
+        font-weight: bold;
+        margin-right: 0;
+    }
 
-  .rate-card .card-body .rate-change {
-    font-size: 9px;
-    display: flex;
-    align-items: center;
-  }
+    .rate-card .card-body .rate-change {
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+    }
 
-  .rate-card .card-body .rate-change .change-indicator {
-    margin-right: 2px;
-  }
+    .rate-card .card-body .rate-change .change-indicator {
+        margin-right: 2px;
+    }
 
-  .rate-card .card-body .rate-change .percentage {
-    font-size: 8px;
-    color: #888;
-  }
+    .rate-card .card-body .rate-change .percentage {
+        font-size: 9px;
+        color: #888;
+    }
 
-  .rate-card .rate-footer {
-    font-size: 8px; /* Pie de página muy pequeño */
-    color: #777;
-    padding: 2px 0;
-    margin-top: 2px;
-    width: 100%;
-    text-align: center; /* Centrar el pie de página */
-  }
+    .rate-card .rate-footer {
+        font-size: 9px; /* Pie de página un poco más grande */
+        color: #777;
+        padding: 4px 0;
+        margin-top: 4px;
+        width: 100%;
+        text-align: center; /* Centrar el pie de página */
+    }
 
-  .rate-card .rate-footer p {
-    margin: 1px 0;
-  }
+    .rate-card .rate-footer p {
+        margin: 2px 0;
+    }
 
-  .rate-card .rate-footer .update-time i.fa-clock {
-    display: none; /* Ocultar el icono del reloj */
-  }
+    .rate-card .rate-footer .update-time i.fa-clock {
+        display: none; /* Ocultar el icono del reloj */
+    }
 }
