@@ -619,7 +619,7 @@ input.invalid {
     }
 
     .rate-card .card-header h3 {
-        font-size: 10px; /* Título muy pequeño */
+        font-size: 12px; /* Título muy pequeño */
         margin: 0;
         line-height: 1.1;
         text-align: center; /* Centrar el título */
@@ -629,7 +629,7 @@ input.invalid {
         display: flex;
         flex-direction: column;
         align-items: center; /* Centrar el contenido del body */
-        padding: 8px; /* Agregar un poco de padding al body en móvil */
+        padding: 5px; /* Agregar un poco de padding al body en móvil */
         width: 100%;
     }
 
@@ -638,16 +638,20 @@ input.invalid {
         flex-direction: column; /* Apilar precio y cambio */
         align-items: center;
         margin-bottom: 4px;
+        width: 100%; /* Asegurar que el contenedor del precio ocupe todo el ancho */
+        overflow-wrap: break-word; /* Permite que las palabras largas se rompan */
+        word-break: break-all; /* Rompe palabras en puntos arbitrarios si es necesario */
     }
 
     .rate-card .card-body .price {
-        font-size: 18px; /* Precio más legible en móvil */
+        font-size: 16px; /* Reducir ligeramente el tamaño de la fuente */
         font-weight: bold;
         margin-right: 0;
+        text-align: center; /* Centrar el precio */
     }
 
     .rate-card .card-body .rate-change {
-        font-size: 10px;
+        font-size: 12px;
         display: flex;
         align-items: center;
     }
@@ -657,12 +661,12 @@ input.invalid {
     }
 
     .rate-card .card-body .rate-change .percentage {
-        font-size: 9px;
+        font-size: 11px;
         color: #888;
     }
 
     .rate-card .rate-footer {
-        font-size: 9px; /* Pie de página un poco más grande */
+        font-size: 11px; /* Pie de página un poco más grande */
         color: #777;
         padding: 4px 0;
         margin-top: 4px;
