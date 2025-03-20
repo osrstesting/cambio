@@ -685,9 +685,10 @@ input.invalid {
     }
 
     /* Mensajes flotantes en móviles */
-    .message-container {
-        top: 10px; /* Ahora lo movemos a la parte superior solo en móviles */
-        bottom: unset; /* Intenta con unset en lugar de auto */
-		pointer-events: none;   
-   }
+ .message-container {
+        position: absolute; /* Cambia a absolute */
+        top: 10px;
+        bottom: auto;
+    }
+}
 }
