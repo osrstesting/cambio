@@ -392,7 +392,8 @@ input.invalid {
 /* Mensajes flotantes */
 .message-container {
     position: fixed;
-    bottom: 20px;
+    bottom: auto; /* Dejamos que fluya verticalmente */
+    top: 10px; /* Lo movemos a la parte superior para probar */
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
@@ -540,6 +541,7 @@ input.invalid {
         /* align-items: center;  Elimina o comenta esta línea para alinear arriba */
         justify-content: flex-start; /* Alinea los elementos al inicio (arriba) del contenedor flex */
         min-height: auto; /* Ajusta la altura automáticamente */
+        padding-bottom: 60px; /* Espacio para que los mensajes sean visibles sobre el teclado */
     }
 
     /* Ajustes para la calculadora en móviles */
@@ -666,7 +668,7 @@ input.invalid {
     }
 
     .rate-card .rate-footer {
-        font-size: 11px; /* Pie de página un poco más grande */
+        font-size: 10px; /* Pie de página un poco más grande */
         color: #777;
         padding: 4px 0;
         margin-top: 4px;
@@ -680,5 +682,11 @@ input.invalid {
 
     .rate-card .rate-footer .update-time i.fa-clock {
         display: none; /* Ocultar el icono del reloj */
+    }
+
+    /* Mensajes flotantes en móviles */
+    .message-container {
+        bottom: 10px; /* Pegado a la parte inferior, pero con padding en el body */
+        top: auto; /* Aseguramos que no se superponga con la parte superior */
     }
 }
