@@ -584,7 +584,7 @@ input.invalid {
 .rates-grid {
         display: flex;
         flex-direction: column;
-        padding: 0 10px; /* Padding horizontal para separar del borde */
+        padding: 0 0px; /* Padding horizontal para separar del borde */
         gap: 5px; /* REDUCIDO el espacio entre tarjetas */
     }
 
